@@ -1,0 +1,5 @@
+name: Backpacks
+version: 1.0.0
+authors: [ Hempfest ]
+main: com.youtube.hempfest.backpack.Backpacks
+api-version: 1.13
