@@ -34,7 +34,7 @@ public class BackpackInteractionListener implements Listener {
 				if (BackpackAPI.getBackpack(item) == null) {
 					if (item.hasItemMeta()) {
 						if (item.getItemMeta().hasDisplayName()) {
-							if (item.getItemMeta().getDisplayName().equals(StringUtils.translate("&f[Empty] &b&oBackpack"))) {
+							if (item.getItemMeta().getDisplayName().contains(StringUtils.translate("&e[Empty] &b&oBackpack"))) {
 								BackpackCreateEvent event = new BackpackCreateEvent(e.getPlayer(), item);
 								Bukkit.getPluginManager().callEvent(event);
 								if (event.isCancelled()) {

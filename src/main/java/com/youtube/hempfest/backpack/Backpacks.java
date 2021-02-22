@@ -21,7 +21,7 @@ public final class Backpacks extends JavaPlugin {
 	public void onEnable() {
 		// Plugin startup logic
 		new EventBuilder(this).compileFields("com.youtube.hempfest.backpack.construct");
-		new Item(Material.TRAPPED_CHEST, "&f[Empty] &b&oBackpack").
+		new Item(Material.TRAPPED_CHEST, "&e[Empty] &b&oBackpack").
 				setKey("owner").
 				buildStack().
 				attachLore(Collections.singletonList(StringUtils.translate("&3&oRight-click to open."))).
