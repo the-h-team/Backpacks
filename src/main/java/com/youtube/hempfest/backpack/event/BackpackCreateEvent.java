@@ -1,5 +1,7 @@
 package com.youtube.hempfest.backpack.event;
 
+import com.github.sanctum.labyrinth.library.StringUtils;
+import java.util.UUID;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -22,9 +24,15 @@ public class BackpackCreateEvent extends Event implements Cancellable {
 
 	private int size = 27;
 
-	public BackpackCreateEvent(Player creator, ItemStack empty) {
+	private String itemName;
+
+	private UUID owner;
+
+	public BackpackCreateEvent(Player creator, String itemName, ItemStack empty) {
 		this.opener = creator;
+		this.itemName = itemName;
 		this.empty = empty;
+		this.owner = creator.getUniqueId();
 	}
 
 	public Player getOpener() {
@@ -33,6 +41,22 @@ public class BackpackCreateEvent extends Event implements Cancellable {
 
 	public ItemStack getEmpty() {
 		return empty;
+	}
+
+	public void setOwner(UUID owner) {
+		this.owner = owner;
+	}
+
+	public UUID getOwner() {
+		return owner;
+	}
+
+	public String getItemName() {
+		return StringUtils.translate(itemName);
+	}
+
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
 	}
 
 	public int getSize() {

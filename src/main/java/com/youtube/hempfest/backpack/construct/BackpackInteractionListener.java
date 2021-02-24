@@ -7,8 +7,11 @@ import com.github.sanctum.labyrinth.library.StringUtils;
 import com.youtube.hempfest.backpack.api.BackpackAPI;
 import com.youtube.hempfest.backpack.event.BackpackCloseEvent;
 import com.youtube.hempfest.backpack.event.BackpackCreateEvent;
+import com.youtube.hempfest.backpack.event.BackpackAttachLoreEvent;
 import com.youtube.hempfest.backpack.event.BackpackOpenEvent;
+import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Date;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -35,19 +38,22 @@ public class BackpackInteractionListener implements Listener {
 					if (item.hasItemMeta()) {
 						if (item.getItemMeta().hasDisplayName()) {
 							if (item.getItemMeta().getDisplayName().contains(StringUtils.translate("&e[Empty] &b&oBackpack"))) {
-								BackpackCreateEvent event = new BackpackCreateEvent(e.getPlayer(), item);
+								HUID id = HUID.randomID();
+								BackpackCreateEvent event = new BackpackCreateEvent(e.getPlayer(), "&f[#&b&o" + id.toString() + "&f] &e" + e.getPlayer().getName(), item);
 								Bukkit.getPluginManager().callEvent(event);
 								if (event.isCancelled()) {
 									e.setCancelled(true);
 									return;
 								}
+								BackpackAttachLoreEvent event2 = new BackpackAttachLoreEvent(e.getPlayer());
+								Bukkit.getPluginManager().callEvent(event2);
 								item.setAmount(item.getAmount() - 1);
 								Message msg = new Message(e.getPlayer(), "&7[&bBackpack&7]");
 								msg.send("&aA new bag was obtained.");
 								ItemStack newItem = new ItemStack(Material.TRAPPED_CHEST);
 								ItemMeta meta = newItem.getItemMeta();
-								HUID id = HUID.randomID();
-								meta.setDisplayName(StringUtils.translate("&f[#&b&o" + id.toString() + "&f] &e" + e.getPlayer().getName()));
+								meta.setDisplayName(event.getItemName());
+								meta.setLore(event2.getAdditions());
 								meta.getPersistentDataContainer().set(new NamespacedKey(Labyrinth.getInstance(), "owner"), PersistentDataType.STRING, e.getPlayer().getUniqueId().toString());
 								meta.getPersistentDataContainer().set(new NamespacedKey(Labyrinth.getInstance(), "id"), PersistentDataType.STRING, id.toString());
 								newItem.setItemMeta(meta);
@@ -57,14 +63,14 @@ public class BackpackInteractionListener implements Listener {
 									e.getPlayer().getWorld().dropItemNaturally(e.getPlayer().getLocation(), newItem);
 								}
 								Backpack backpack = new Backpack("Default-" + id.toString());
-								backpack.setTitle(id.toString()).setSize(event.getSize()).setOwner(e.getPlayer().getUniqueId()).setItem(newItem).build();
-								BackpackOpenEvent event2 = new BackpackOpenEvent(e.getPlayer(), backpack);
-								Bukkit.getPluginManager().callEvent(event2);
-								if (!event2.isCancelled()) {
+								backpack.setTitle(id.toString()).setSize(event.getSize()).setOwner(event.getOwner()).setItem(newItem).build();
+								BackpackOpenEvent event3 = new BackpackOpenEvent(e.getPlayer(), backpack);
+								Bukkit.getPluginManager().callEvent(event3);
+								if (!event3.isCancelled()) {
 									e.getPlayer().openInventory(BackpackAPI.getContents(backpack));
-									e.getPlayer().playSound(e.getPlayer().getLocation(), event2.getOpenSound(), 10, 1);
-									e.getPlayer().playSound(e.getPlayer().getLocation(), event2.getOpenSound(), 10, 4);
-									e.getPlayer().playSound(e.getPlayer().getLocation(), event2.getOpenSound(), 10, 8);
+									e.getPlayer().playSound(e.getPlayer().getLocation(), event3.getOpenSound(), 10, 1);
+									e.getPlayer().playSound(e.getPlayer().getLocation(), event3.getOpenSound(), 10, 4);
+									e.getPlayer().playSound(e.getPlayer().getLocation(), event3.getOpenSound(), 10, 8);
 								}
 								e.setCancelled(true);
 							}
@@ -75,7 +81,7 @@ public class BackpackInteractionListener implements Listener {
 					BackpackOpenEvent event = new BackpackOpenEvent(e.getPlayer(), backpack);
 					Bukkit.getPluginManager().callEvent(event);
 					if (!event.isCancelled()) {
-						e.getPlayer().openInventory(BackpackAPI.getContents(backpack));
+						backpack.open(e.getPlayer());
 						e.getPlayer().playSound(e.getPlayer().getLocation(), event.getOpenSound(), 10, 1);
 						e.getPlayer().playSound(e.getPlayer().getLocation(), event.getOpenSound(), 10, 4);
 						e.getPlayer().playSound(e.getPlayer().getLocation(), event.getOpenSound(), 10, 8);
@@ -94,10 +100,24 @@ public class BackpackInteractionListener implements Listener {
 			return;
 		if (BackpackAPI.getBackpack(e.getView().getTitle()) == null)
 			return;
+		if (e.getHotbarButton() != -1) {
+			e.setCancelled(true);
+			return;
+		}
 		Backpack backpack = BackpackAPI.getBackpack(e.getView().getTitle());
 		if (e.getCurrentItem() != null & backpack.getItem().equals(e.getCurrentItem())) {
 			e.setCancelled(true);
 		}
+	}
+
+	@EventHandler
+	public void backpackCreate(BackpackCreateEvent e) {
+		e.setItemName("&e&o" + e.getOpener().getName() + "'s &fBackpack.");
+	}
+
+	@EventHandler
+	public void backPackCreate(BackpackAttachLoreEvent e) {
+		e.addLore(StringUtils.translate("&ePack creation : [&7" + new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() + "&e]"));
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)

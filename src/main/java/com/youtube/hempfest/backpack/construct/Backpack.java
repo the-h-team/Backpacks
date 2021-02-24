@@ -6,6 +6,7 @@ import com.github.sanctum.labyrinth.library.HUID;
 import com.youtube.hempfest.backpack.api.BackpackAPI;
 import java.io.Serializable;
 import java.util.UUID;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -122,6 +123,10 @@ public class Backpack implements Serializable {
 			container.storeTemp();
 			container.saveMeta();
 		}
+	}
+
+	public void open(Player p) {
+		p.openInventory(BackpackAPI.getContents(this));
 	}
 
 	/**
