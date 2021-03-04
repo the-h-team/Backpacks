@@ -1,5 +1,6 @@
 package com.youtube.hempfest.backpack.api;
 
+import com.github.sanctum.labyrinth.data.Config;
 import com.github.sanctum.labyrinth.data.container.DataContainer;
 import com.github.sanctum.labyrinth.data.container.DataStream;
 import com.github.sanctum.labyrinth.library.HFEncoded;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -20,6 +22,10 @@ import org.bukkit.inventory.ItemStack;
  * The one and only implementation for Backpack API usage.
  */
 public class BackpackAPI {
+
+	public static Config config  = Config.get("Config", "Backpacks");
+
+	public static final LinkedList<Material> typeList = new LinkedList<>();
 
 	/**
 	 * Get the entire cache for backpacks.

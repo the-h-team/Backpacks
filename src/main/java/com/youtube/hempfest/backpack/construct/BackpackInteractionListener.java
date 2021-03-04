@@ -1,6 +1,7 @@
 package com.youtube.hempfest.backpack.construct;
 
 import com.github.sanctum.labyrinth.Labyrinth;
+import com.github.sanctum.labyrinth.formatting.string.RandomID;
 import com.github.sanctum.labyrinth.library.HUID;
 import com.github.sanctum.labyrinth.library.Message;
 import com.github.sanctum.labyrinth.library.StringUtils;
@@ -32,7 +33,7 @@ public class BackpackInteractionListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onOpen(PlayerInteractEvent e) {
 		if (Arrays.asList(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK).contains(e.getAction())) {
-			if (e.getPlayer().getInventory().getItemInMainHand().getType() == Material.TRAPPED_CHEST) {
+			if (BackpackAPI.typeList.contains(e.getPlayer().getInventory().getItemInMainHand().getType())) {
 				ItemStack item = e.getPlayer().getInventory().getItemInMainHand();
 				if (BackpackAPI.getBackpack(item) == null) {
 					if (item.hasItemMeta()) {
@@ -96,8 +97,6 @@ public class BackpackInteractionListener implements Listener {
 	public void onClick(InventoryClickEvent e) {
 		if (!(e.getWhoClicked() instanceof Player))
 			return;
-		if (e.getView().getTopInventory().getSize() != 27)
-			return;
 		if (BackpackAPI.getBackpack(e.getView().getTitle()) == null)
 			return;
 		if (e.getHotbarButton() != -1) {
@@ -110,14 +109,24 @@ public class BackpackInteractionListener implements Listener {
 		}
 	}
 
+	private String format(Player target, String text) {
+		return text.replace("{RANDOM_ID_LONG}", HUID.randomID().toString())
+				.replace("{RANDOM_ID_SHORT}", new RandomID(4).generate())
+				.replace("{PLAYER}", target.getName())
+				.replace("{DATE}", new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString());
+	}
+
 	@EventHandler
 	public void backpackCreate(BackpackCreateEvent e) {
-		e.setItemName("&e&o" + e.getOpener().getName() + "'s &fBackpack.");
+		e.setSize(BackpackAPI.config.getConfig().getInt("pack-size"));
+		e.setItemName(format(e.getOpener(), BackpackAPI.config.getConfig().getString("pack-name")));
 	}
 
 	@EventHandler
 	public void backPackCreate(BackpackAttachLoreEvent e) {
-		e.addLore(StringUtils.translate("&ePack creation : [&7" + new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString() + "&e]"));
+		for (String s : BackpackAPI.config.getConfig().getStringList("pack-lore")) {
+			e.addLore(StringUtils.translate(format(e.getOwner(), s)));
+		}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -125,8 +134,6 @@ public class BackpackInteractionListener implements Listener {
 		if (!(e.getPlayer() instanceof Player))
 			return;
 		Player p = (Player) e.getPlayer();
-		if (e.getView().getTopInventory().getSize() != 27)
-			return;
 		if (BackpackAPI.getBackpack(e.getView().getTitle()) == null)
 			return;
 		Backpack backpack = BackpackAPI.getBackpack(e.getView().getTitle());
