@@ -21,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -99,11 +100,10 @@ public class BackpackInteractionListener implements Listener {
 			return;
 		if (BackpackAPI.getBackpack(e.getView().getTitle()) == null)
 			return;
-		if (e.getHotbarButton() != -1) {
-			e.setCancelled(true);
-			return;
-		}
 		Backpack backpack = BackpackAPI.getBackpack(e.getView().getTitle());
+		if (e.getClick().isKeyboardClick()) {
+			e.setCancelled(true);
+		}
 		if (e.getCurrentItem() != null & backpack.getItem().equals(e.getCurrentItem())) {
 			e.setCancelled(true);
 		}

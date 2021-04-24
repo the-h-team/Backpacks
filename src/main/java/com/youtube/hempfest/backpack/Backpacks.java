@@ -1,6 +1,7 @@
 package com.youtube.hempfest.backpack;
 
-import com.github.sanctum.labyrinth.data.Config;
+import com.github.sanctum.labyrinth.data.FileList;
+import com.github.sanctum.labyrinth.data.FileManager;
 import com.github.sanctum.labyrinth.data.container.DataStream;
 import com.github.sanctum.labyrinth.event.EventBuilder;
 import com.github.sanctum.labyrinth.library.HFEncoded;
@@ -19,9 +20,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Backpacks extends JavaPlugin {
 
+	public static FileList backpackSource;
+
 	@Override
 	public void onEnable() {
 		// Plugin startup logic
+		backpackSource = FileList.search(this);
 		new EventBuilder(this).compileFields("com.youtube.hempfest.backpack.construct");
 		new Item(Material.TRAPPED_CHEST, "&e[Empty] &b&oBackpack").
 				setKey("owner").
@@ -45,7 +49,8 @@ public final class Backpacks extends JavaPlugin {
 		BackpackAPI.typeList.add(Material.TRAPPED_CHEST);
 		if (!BackpackAPI.config.exists()) {
 			InputStream stream = getResource("Config.yml");
-			Config.copy(stream, BackpackAPI.config.getFile());
+			assert stream != null;
+			FileManager.copy(stream, BackpackAPI.config.getFile());
 		}
 	}
 }

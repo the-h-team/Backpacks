@@ -1,7 +1,7 @@
 package com.youtube.hempfest.backpack.construct;
 
-import com.github.ms5984.api.menuman.Menu;
 import com.github.sanctum.labyrinth.data.container.DataContainer;
+import com.github.sanctum.labyrinth.gui.InventoryRows;
 import com.github.sanctum.labyrinth.library.HUID;
 import com.youtube.hempfest.backpack.api.BackpackAPI;
 import java.io.Serializable;
@@ -50,7 +50,7 @@ public class Backpack implements Serializable {
 	 * @param rows The size of the inventory.
 	 * @return The builder object.
 	 */
-	public Backpack setSize(Menu.InventoryRows rows) {
+	public Backpack setSize(InventoryRows rows) {
 		this.size = rows.slotCount;
 		return this;
 	}

@@ -1,11 +1,13 @@
 package com.youtube.hempfest.backpack.api;
 
-import com.github.sanctum.labyrinth.data.Config;
+import com.github.sanctum.labyrinth.data.FileManager;
 import com.github.sanctum.labyrinth.data.container.DataContainer;
 import com.github.sanctum.labyrinth.data.container.DataStream;
 import com.github.sanctum.labyrinth.library.HFEncoded;
 import com.github.sanctum.labyrinth.library.HUID;
 import com.github.sanctum.labyrinth.library.StringUtils;
+import com.sun.deploy.config.Config;
+import com.youtube.hempfest.backpack.Backpacks;
 import com.youtube.hempfest.backpack.construct.Backpack;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class BackpackAPI {
 
-	public static Config config  = Config.get("Config", "Backpacks");
+	public static FileManager config  = Backpacks.backpackSource.find("Config", "Backpacks");
 
 	public static final LinkedList<Material> typeList = new LinkedList<>();
 
